@@ -1,7 +1,7 @@
 {
   "network": {
-    "name": "localhost",
-    "chainId": 31337
+    "name": "sepolia",
+    "chainId": 11155111
   },
   "claimTypes": {
     "KYC_VERIFIED": "0xfe61b4d82542c9af53021e45cfdb4bc0b40b2f293957106d3572541400a5b17b",
@@ -10,7 +10,7 @@
   },
   "contracts": {
     "IdentityRegistry": {
-      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "address": "0x9461291748214D230322d4bFc6293116d86B57B3",
       "abi": [
         {
           "inputs": [
@@ -302,7 +302,7 @@
       ]
     },
     "IssuerRegistry": {
-      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "address": "0x1F1DeD75170Fd177d0178D1A4569F05E902d1A72",
       "abi": [
         {
           "inputs": [
@@ -843,7 +843,7 @@
       ]
     },
     "ClaimStore": {
-      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "address": "0x48957E245E0953152DeA75B8aC1A8124041f08A1",
       "abi": [
         {
           "inputs": [
@@ -1428,7 +1428,7 @@
       ]
     },
     "RecoveryModule": {
-      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "address": "0x638807b0aE2807179e831Cb6287951B6cfDc828B",
       "abi": [
         {
           "inputs": [],
@@ -1754,7 +1754,7 @@
       ]
     },
     "GatedDeFiService": {
-      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      "address": "0x8B8dCffe10834065C24d817f953469144F75416f",
       "abi": [
         {
           "inputs": [
