@@ -1,6 +1,9 @@
 # Decentralized Identity Management System (SSI on Ethereum)
 
-A modular, production-ready decentralized self-sovereign identity (SSI) and verifiable claim registry on Ethereum, built with Solidity `0.8.24`, Hardhat, and OpenZeppelin Contracts.
+A modular, production-ready decentralized self-sovereign identity (SSI) and verifiable claim registry on Ethereum, built with Solidity `0.8.24`, Hardhat, OpenZeppelin Contracts, and a modern React + Vite frontend.
+
+> 🚀 **Looking for how to run and test the frontend?**
+> Read the complete step-by-step guide: **[HOW_TO_USE.md](./HOW_TO_USE.md)**.
 
 ---
 

@@ -1,0 +1,1907 @@
+{
+  "network": {
+    "name": "localhost",
+    "chainId": 31337
+  },
+  "claimTypes": {
+    "KYC_VERIFIED": "0xfe61b4d82542c9af53021e45cfdb4bc0b40b2f293957106d3572541400a5b17b",
+    "OVER_18": "0x6564b0ef6584d614f55f8f893ef89dbc591adaef07b5689ca2cb054dbcfee7c0",
+    "RESIDENCY_ACCREDITED": "0x7201523f2c277d48ec98a137155d5b9d5da93fe2ba38e919106b5805f4795b50"
+  },
+  "contracts": {
+    "IdentityRegistry": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            }
+          ],
+          "name": "IdentityAlreadyActive",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            }
+          ],
+          "name": "IdentityAlreadyExists",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            }
+          ],
+          "name": "IdentityInactive",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            }
+          ],
+          "name": "IdentityNotFound",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidMetadata",
+          "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "timestamp",
+              "type": "uint64"
+            }
+          ],
+          "name": "IdentityDeactivated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "metadataURI",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "metadataHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "timestamp",
+              "type": "uint64"
+            }
+          ],
+          "name": "IdentityMetadataUpdated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "timestamp",
+              "type": "uint64"
+            }
+          ],
+          "name": "IdentityReactivated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "metadataURI",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "metadataHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "timestamp",
+              "type": "uint64"
+            }
+          ],
+          "name": "IdentityRegistered",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "deactivateIdentity",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            }
+          ],
+          "name": "getIdentity",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "bool",
+                  "name": "exists",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "address",
+                  "name": "owner",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "createdAt",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "updatedAt",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "string",
+                  "name": "metadataURI",
+                  "type": "string"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "metadataHash",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "active",
+                  "type": "bool"
+                }
+              ],
+              "internalType": "struct IIdentityRegistry.IdentityRecord",
+              "name": "",
+              "type": "tuple"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            }
+          ],
+          "name": "hasActiveIdentity",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "reactivateIdentity",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "metadataURI",
+              "type": "string"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "metadataHash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "registerIdentity",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "totalIdentities",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "metadataURI",
+              "type": "string"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "metadataHash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "updateMetadata",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    },
+    "IssuerRegistry": {
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "admin",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "AccessControlBadConfirmation",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "neededRole",
+              "type": "bytes32"
+            }
+          ],
+          "name": "AccessControlUnauthorizedAccount",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ClaimTypeAlreadyAuthorized",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ClaimTypeNotAuthorized",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "EmptyName",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            }
+          ],
+          "name": "IssuerAlreadyExists",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            }
+          ],
+          "name": "IssuerDoesNotExist",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "ZeroAddress",
+          "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "timestamp",
+              "type": "uint64"
+            }
+          ],
+          "name": "ClaimTypeAuthorized",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "timestamp",
+              "type": "uint64"
+            }
+          ],
+          "name": "ClaimTypeRevoked",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "timestamp",
+              "type": "uint64"
+            }
+          ],
+          "name": "IssuerAdded",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "timestamp",
+              "type": "uint64"
+            }
+          ],
+          "name": "IssuerRemoved",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "previousAdminRole",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "newAdminRole",
+              "type": "bytes32"
+            }
+          ],
+          "name": "RoleAdminChanged",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            }
+          ],
+          "name": "RoleGranted",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            }
+          ],
+          "name": "RoleRevoked",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "DEFAULT_ADMIN_ROLE",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "ISSUER_MANAGER_ROLE",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            }
+          ],
+          "name": "addIssuer",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            }
+          ],
+          "name": "authorizeClaimType",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            }
+          ],
+          "name": "canIssueClaim",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            }
+          ],
+          "name": "getIssuerName",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            }
+          ],
+          "name": "getRoleAdmin",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "grantRole",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "hasRole",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            }
+          ],
+          "name": "isTrustedIssuer",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            }
+          ],
+          "name": "removeIssuer",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "callerConfirmation",
+              "type": "address"
+            }
+          ],
+          "name": "renounceRole",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            }
+          ],
+          "name": "revokeClaimType",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "role",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "revokeRole",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes4",
+              "name": "interfaceId",
+              "type": "bytes4"
+            }
+          ],
+          "name": "supportsInterface",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "ClaimStore": {
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_issuerRegistry",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_identityRegistry",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "subject",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ClaimAlreadyRevoked",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "subject",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ClaimNotFound",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "ECDSAInvalidSignature",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "length",
+              "type": "uint256"
+            }
+          ],
+          "name": "ECDSAInvalidSignatureLength",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "s",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ECDSAInvalidSignatureS",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidClaimHash",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidExpiry",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidShortString",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidSignature",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidSubject",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "SignatureExpired",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "str",
+              "type": "string"
+            }
+          ],
+          "name": "StringTooLong",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "subject",
+              "type": "address"
+            }
+          ],
+          "name": "SubjectHasNoActiveIdentity",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            }
+          ],
+          "name": "UnauthorizedIssuer",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "caller",
+              "type": "address"
+            }
+          ],
+          "name": "UnauthorizedRevoker",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "ZeroAddress",
+          "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "subject",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "claimHash",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint64",
+              "name": "expiresAt",
+              "type": "uint64"
+            }
+          ],
+          "name": "ClaimIssued",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "subject",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "revoker",
+              "type": "address"
+            }
+          ],
+          "name": "ClaimRevoked",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [],
+          "name": "EIP712DomainChanged",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "ISSUE_CLAIM_TYPEHASH",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "eip712Domain",
+          "outputs": [
+            {
+              "internalType": "bytes1",
+              "name": "fields",
+              "type": "bytes1"
+            },
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "version",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "chainId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "verifyingContract",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "salt",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "extensions",
+              "type": "uint256[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "subject",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            }
+          ],
+          "name": "getClaim",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "bytes32",
+                  "name": "claimHash",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "address",
+                  "name": "issuer",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "issuedAt",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "expiresAt",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "revoked",
+                  "type": "bool"
+                }
+              ],
+              "internalType": "struct IClaimStore.ClaimRecord",
+              "name": "",
+              "type": "tuple"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "subject",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "expiresAt",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint256",
+              "name": "nonce",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "deadline",
+              "type": "uint256"
+            }
+          ],
+          "name": "getClaimDigest",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "identityRegistry",
+          "outputs": [
+            {
+              "internalType": "contract IIdentityRegistry",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "subject",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            }
+          ],
+          "name": "isClaimValid",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "subject",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "expiresAt",
+              "type": "uint64"
+            }
+          ],
+          "name": "issueClaim",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "subject",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "expiresAt",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint256",
+              "name": "deadline",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "signature",
+              "type": "bytes"
+            }
+          ],
+          "name": "issueClaimWithSignature",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "issuerNonces",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "issuerRegistry",
+          "outputs": [
+            {
+              "internalType": "contract IIssuerRegistry",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "subject",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            }
+          ],
+          "name": "revokeClaim",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "subject",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            }
+          ],
+          "name": "verifyClaim",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "valid",
+              "type": "bool"
+            },
+            {
+              "internalType": "address",
+              "name": "issuer",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "expiresAt",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "RecoveryModule": {
+      "address": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "abi": [
+        {
+          "inputs": [],
+          "name": "AlreadyApproved",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "AlreadyConfigured",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "AlreadyExecuted",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidAddress",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InvalidThreshold",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "NotConfigured",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "NotGuardian",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "current",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "required",
+              "type": "uint256"
+            }
+          ],
+          "name": "ThresholdNotMet",
+          "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address[]",
+              "name": "guardians",
+              "type": "address[]"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "threshold",
+              "type": "uint256"
+            }
+          ],
+          "name": "GuardiansConfigured",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "guardian",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "currentApprovals",
+              "type": "uint256"
+            }
+          ],
+          "name": "RecoveryApproved",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "oldOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "RecoveryExecuted",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "guardian",
+              "type": "address"
+            }
+          ],
+          "name": "RecoveryInitiated",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "oldOwner",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "approveRecovery",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address[]",
+              "name": "guardians",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256",
+              "name": "threshold",
+              "type": "uint256"
+            }
+          ],
+          "name": "configureGuardians",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "oldOwner",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "executeRecovery",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "guardianConfigs",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "threshold",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bool",
+              "name": "initialized",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "hasApproved",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "isGuardian",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "recoveryRequests",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "approvalCount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint64",
+              "name": "executedAt",
+              "type": "uint64"
+            },
+            {
+              "internalType": "bool",
+              "name": "executed",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "GatedDeFiService": {
+      "address": "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_claimStore",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "_requiredClaimType",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "claimType",
+              "type": "bytes32"
+            }
+          ],
+          "name": "IdentityVerificationFailed",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "InsufficientBalance",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "ZeroDeposit",
+          "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Deposited",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Withdrawn",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "claimStore",
+          "outputs": [
+            {
+              "internalType": "contract IClaimStore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "deposit",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "requiredClaimType",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "userBalances",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "withdraw",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    }
+  }
+}
