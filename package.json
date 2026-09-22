@@ -1,0 +1,21 @@
+{
+  "name": "decentralized-identity-system",
+  "version": "1.0.0",
+  "description": "Decentralized Self-Sovereign Identity and Claim Registry on Ethereum",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "demo": "hardhat run scripts/demo_flow.ts",
+    "deploy": "hardhat run scripts/deploy.ts",
+    "clean": "hardhat clean"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^16.4.7",
+    "hardhat": "^2.22.18",
+    "typescript": "5.7.2"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.2.0"
+  }
+}
