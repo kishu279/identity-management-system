@@ -1,5 +1,3 @@
-Absolutely, boss. Here’s the **complete polished `README.md`** ready to replace the existing one.
-
 ````markdown
 # AegisID — Decentralized Identity Management System
 
