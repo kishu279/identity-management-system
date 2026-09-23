@@ -1,4 +1,3 @@
-````markdown
 # AegisID — Decentralized Identity Management System
 
 <p align="center">
@@ -18,6 +17,19 @@
   <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black" alt="React 19">
   <img src="https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white" alt="Vite 8">
   <img src="https://img.shields.io/badge/ethers.js-6-3C3C3D?logo=ethereum&logoColor=white" alt="ethers.js 6">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License">
+</p>
+
+<p align="center">
+  <a href="#-overview">Overview</a> •
+  <a href="#-architecture">Architecture</a> •
+  <a href="#-features">Features</a> •
+  <a href="#-tech-stack">Tech Stack</a> •
+  <a href="#-getting-started">Getting Started</a> •
+  <a href="#-usage-flow">Usage Flow</a> •
+  <a href="#-testing">Testing</a> •
+  <a href="#-roadmap">Roadmap</a> •
+  <a href="#-contributing">Contributing</a>
 </p>
 
 ---
@@ -26,7 +38,7 @@
 
 **AegisID** is a decentralized self-sovereign identity (SSI) system built around Ethereum smart contracts.
 
-Instead of putting personal information directly on a blockchain, the system keeps sensitive identity attributes off-chain while anchoring cryptographic commitments, issuer status, credential state, revocation, and expiration on-chain.
+Instead of putting personal information directly on a blockchain, the system keeps sensitive identity attributes **off-chain** while anchoring cryptographic commitments, issuer status, credential state, revocation, and expiration **on-chain**. This gives users full ownership of their identity data while still allowing anyone to trustlessly verify a credential's authenticity in real time.
 
 The system models the complete identity lifecycle:
 
@@ -40,1009 +52,210 @@ Verifiable Claim
 Verifier
       ↓
 Application / Protocol
-````
+```
 
-### Core Principle
-
-> **Keep sensitive identity data off-chain and make trust, verification, and credential state programmable on-chain.**
+A holder creates a decentralized identifier (DID) tied to their wallet. A whitelisted issuer (a university, employer, KYC provider, government body, etc.) attests to a claim about that holder — e.g. *"is over 18"*, *"holds a valid degree"*, *"passed KYC"* — and anchors a hash of that claim on-chain. Any verifier or dApp can then check the claim's validity, issuer authenticity, and revocation status directly against the contract, without ever seeing the underlying document or contacting the issuer.
 
 ---
 
-# ✨ Key Features
+## 🏗 Architecture
 
-| Feature                          | Description                                                                               |
-| -------------------------------- | ----------------------------------------------------------------------------------------- |
-| 🆔 **Self-Sovereign Identity**   | Users can register, update, deactivate, and reactivate their identity.                    |
-| 🏛️ **Trusted Issuers**          | Administrators manage trusted issuers and their authorized claim types.                   |
-| 🔐 **Privacy-Preserving Claims** | Sensitive attributes are represented using cryptographic commitments rather than raw PII. |
-| ✅ **Live Verification**          | Claims can be verified against their current on-chain state.                              |
-| ✍️ **EIP-712 Attestations**      | Supports typed off-chain signatures for claim issuance.                                   |
-| 🚫 **Claim Revocation**          | Previously issued credentials can be revoked.                                             |
-| ⏳ **Credential Expiration**      | Claims can automatically become invalid after their expiry timestamp.                     |
-| 👥 **Social Recovery**           | M-of-N guardian recovery workflow.                                                        |
-| 💰 **Gated DeFi**                | Example relying-party protocol uses identity claims for access control.                   |
-| 🖥️ **Web3 Dashboard**           | Admin, Issuer, User, Verifier and Gated DeFi portals.                                     |
+```text
+┌────────────────┐        ┌──────────────────────┐        ┌────────────────────┐
+│  Identity Holder│───────▶│  AegisID Smart        │───────▶│     Verifier /      │
+│  (Wallet / DID) │  claim │  Contracts (on-chain) │ query  │  dApp / Protocol    │
+└────────────────┘  submit └──────────────────────┘        └────────────────────┘
+        ▲                          ▲     │
+        │ issues credential        │     │ event logs
+        │                          │     ▼
+┌────────────────┐        ┌──────────────────────┐
+│ Trusted Issuer  │───────▶│  Off-chain Storage    │
+│ (University /   │  store │  (IPFS / encrypted    │
+│  Employer / Govt)│documents│  document store)     │
+└────────────────┘        └──────────────────────┘
+```
+
+**Design principle:** only what's needed for trustless verification lives on-chain — DID ↔ address mapping, issuer registry, claim hash, schema ID, issuance/expiry timestamps, and revocation flag. The actual PII (documents, images, personal data) stays off-chain, encrypted, and is only ever shared peer-to-peer between the holder and a verifier who has been explicitly granted access.
 
 ---
 
-# 🏗️ System Architecture
+## ✨ Features
 
-```text
-                         ┌───────────────────────────┐
-                         │      Identity Holder      │
-                         │  Register / Manage ID     │
-                         └─────────────┬─────────────┘
-                                       │
-                                       ▼
-                         ┌───────────────────────────┐
-                         │     IdentityRegistry      │
-                         │                           │
-                         │ • Identity state          │
-                         │ • Metadata URI            │
-                         │ • Metadata hash            │
-                         │ • Active / inactive       │
-                         └─────────────┬─────────────┘
-                                       │
-                    ┌──────────────────┴──────────────────┐
-                    │                                     │
-                    ▼                                     ▼
-          ┌─────────────────────┐             ┌────────────────────────┐
-          │    IssuerRegistry   │             │       ClaimStore        │
-          │                     │             │                        │
-          │ • Trusted issuers   │────────────►│ • Claim storage         │
-          │ • RBAC              │             │ • Issue / revoke        │
-          │ • Claim permissions │             │ • Expiration checks     │
-          └──────────┬──────────┘             │ • EIP-712 verification │
-                     │                        └────────────┬───────────┘
-                     │                                     │
-                     │                                     ▼
-                     │                         ┌────────────────────────┐
-                     └────────────────────────►│       Verifier         │
-                                               │  Live claim checking   │
-                                               └────────────┬───────────┘
-                                                            │
-                                                            ▼
-                                               ┌────────────────────────┐
-                                               │    GatedDeFiService    │
-                                               │   Example Relying App │
-                                               └────────────────────────┘
-
-
-                    Recovery Flow
-                    ─────────────
-
-                 Identity Holder
-                       │
-                       ▼
-                RecoveryModule
-                       │
-                       ▼
-                Guardian Network
-                       │
-                       ▼
-                  M-of-N Approval
-                       │
-                       ▼
-                    Recovery
-```
+- 🔑 **Self-sovereign DIDs** — every user controls their own identity, tied to their wallet, with no central registry owning it.
+- 🏛 **Issuer registry & trust management** — contract owner/DAO can whitelist, suspend, or revoke issuers; every claim is traceable to a verifiable issuer.
+- 📜 **Verifiable claims** — issuers attest to specific attributes (age, KYC status, qualifications, membership) as cryptographically signed, hash-anchored claims.
+- 🕵️ **Privacy-preserving verification** — verifiers check claim validity and issuer trust without ever accessing the underlying raw document.
+- ⛔ **Revocation & expiry** — claims can be revoked or set to expire; verifiers always query current, live status rather than a cached copy.
+- ⚡ **Real-time on-chain verification** — a single `view` call returns whether a claim is valid, current, and issued by a trusted party.
+- 🔌 **Claim-gated applications** — any dApp can gate functionality (e.g. age-restricted access, KYC-gated DeFi, verified-alumni features) behind a claim check.
+- 🧩 **Modular contract design** — identity registry, issuer registry, and claim/credential logic are separated for easier auditing and upgrades.
+- 🖥 **Wallet-based frontend** — connect via MetaMask, register identity, request/view claims, and share verification links.
 
 ---
 
-# 🔐 Smart Contracts
+## 🛠 Tech Stack
 
-## `IdentityRegistry.sol`
-
-The core identity registry.
-
-It maps Ethereum addresses to identity records containing:
-
-* Owner address
-* Creation timestamp
-* Update timestamp
-* Metadata URI
-* Metadata hash
-* Active state
-
-### Identity Lifecycle
-
-```text
-Register
-   │
-   ▼
- Active
-   │
-   ├───────────────► Update Metadata
-   │
-   ├───────────────► Deactivate
-   │                       │
-   │                       ▼
-   │                    Inactive
-   │                       │
-   │                       ▼
-   └──────────────────── Reactivate
-```
+| Layer | Technology |
+|---|---|
+| Smart Contracts | Solidity `0.8.24`, OpenZeppelin Contracts |
+| Dev / Test / Deploy | Hardhat, Hardhat Network, Ethers.js |
+| Off-chain Storage | IPFS (Pinata / web3.storage) for encrypted documents |
+| Frontend | React 19, Vite 8 |
+| Blockchain Interaction | ethers.js v6, MetaMask |
+| Testing | Hardhat + Chai/Mocha, `hardhat-gas-reporter`, `solidity-coverage` |
+| Networks | Hardhat local network, Sepolia testnet |
 
 ---
 
-## `IssuerRegistry.sol`
-
-Manages trusted credential issuers.
-
-It uses OpenZeppelin's `AccessControl` to manage:
-
-* Administrator permissions
-* Issuer-manager permissions
-* Trusted issuer status
-* Authorized claim types
-
-An issuer must satisfy:
+## 📁 Repository Structure
 
 ```text
-Trusted Issuer
-      +
-Authorized Claim Type
-      ↓
-Eligible to Issue Claim
-```
-
-Example claim types:
-
-```text
-KYC_VERIFIED
-OVER_18
-RESIDENCY_VERIFIED
-EDUCATION_VERIFIED
-```
-
----
-
-## `ClaimStore.sol`
-
-The central credential and attestation layer.
-
-Claims contain information such as:
-
-* Subject
-* Claim type
-* Claim hash
-* Issuer
-* Issue timestamp
-* Expiration timestamp
-* Revocation state
-
-The verification system checks:
-
-```text
-Claim Exists
-     +
-Not Revoked
-     +
-Not Expired
-     +
-Issuer Trusted
-     +
-Issuer Authorized
-     ↓
-Valid Claim
-```
-
----
-
-## `RecoveryModule.sol`
-
-Provides guardian-based social recovery.
-
-Example:
-
-```text
-3 Guardians
-     +
-2 Required Approvals
-     ↓
-2-of-3 Recovery
-```
-
-The module maintains guardian configuration and recovery approval state.
-
-> The current module is a recovery component. Connecting recovery execution to the ownership model of a production identity registry requires additional application-level integration.
-
----
-
-## `GatedDeFiService.sol`
-
-An example relying-party application demonstrating how identity verification can become a reusable access-control primitive.
-
-Example:
-
-```solidity
-if (!claimStore.isClaimValid(msg.sender, requiredClaimType)) {
-    revert IdentityVerificationFailed(
-        msg.sender,
-        requiredClaimType
-    );
-}
-```
-
-This means another decentralized application can consume the identity layer without implementing its own identity verification system.
-
----
-
-# 🛡️ Privacy Model
-
-AegisID is designed so that **raw identity attributes are not stored directly on-chain**.
-
-Instead, sensitive information can remain off-chain while a cryptographic commitment is anchored on-chain.
-
-```text
-                 Off-Chain Credential
-                         │
-             ┌───────────┼───────────┐
-             │           │           │
-           Name       Country     Attributes
-             │           │           │
-             └───────────┼───────────┘
-                         │
-                     Secret Salt
-                         │
-                         ▼
-                   Cryptographic
-                      Hash
-                         │
-                         ▼
-                  ClaimStore
-                         │
-                         ▼
-                 Blockchain State
-```
-
-Conceptually:
-
-```text
-claimHash =
-keccak256(
-    encode(
-        subject,
-        claimType,
-        attributes,
-        salt
-    )
-)
-```
-
-This allows applications to verify the anchored credential state without putting the original personal information into blockchain storage.
-
-### ⚠️ Privacy Note
-
-A cryptographic hash does **not** make blockchain activity anonymous.
-
-Wallet addresses, transactions, smart-contract interactions, and any public metadata can remain observable.
-
----
-
-# ✍️ EIP-712 Signed Claims
-
-AegisID supports EIP-712 typed signatures for claim authorization.
-
-```text
-Issuer
-   │
-   │ Signs typed claim
-   ▼
-EIP-712 Signature
-   │
-   ▼
-User / Relayer
-   │
-   ▼
-ClaimStore.issueClaimWithSignature(...)
-   │
-   ├── Deadline validation
-   ├── Nonce validation
-   ├── Replay protection
-   ├── Signature recovery
-   ├── Issuer authorization
-   └── Claim persistence
-```
-
-The signed claim contains information such as:
-
-```text
-Issuer
-Subject
-Claim Type
-Claim Hash
-Expiration
-Nonce
-Deadline
-```
-
-This allows issuers to authorize claims off-chain while another account can submit the signed authorization on-chain.
-
----
-
-# 🔄 End-to-End Identity Flow
-
-## 1️⃣ Admin Registers Issuer
-
-The administrator registers a trusted issuer.
-
-```text
-Admin
-  ↓
-Register Issuer
-  ↓
-Authorize Claim Type
-```
-
----
-
-## 2️⃣ User Registers Identity
-
-The user registers an identity.
-
-```text
-Wallet
-  ↓
-IdentityRegistry
-  ↓
-Active Identity
-```
-
----
-
-## 3️⃣ Issuer Verifies User
-
-The trusted issuer performs its required verification process off-chain.
-
-For example:
-
-```text
-User
- ↓
-KYC Provider
- ↓
-Verification
- ↓
-KYC Credential
-```
-
----
-
-## 4️⃣ Claim Is Created
-
-The issuer generates a cryptographic commitment representing the credential.
-
-```text
-Credential
-    ↓
-Claim Hash
-    ↓
-ClaimStore
-```
-
----
-
-## 5️⃣ Verifier Checks Claim
-
-The verifier queries the blockchain.
-
-```text
-Subject
-   +
-Claim Type
-   ↓
-ClaimStore
-   ↓
-Verification
-```
-
----
-
-## 6️⃣ Application Enforces Access
-
-A decentralized application can consume the verification result.
-
-```text
-Valid Claim
-     ↓
-Access Granted
-
-Invalid / Expired / Revoked Claim
-     ↓
-Access Rejected
-```
-
----
-
-## 7️⃣ Revocation
-
-If an issuer revokes the claim:
-
-```text
-Previously Valid Claim
-        ↓
-     Revoked
-        ↓
-Verification = Invalid
-        ↓
-Application Access Rejected
-```
-
----
-
-# 🖥️ Frontend
-
-The project includes a React + Vite + TypeScript Web3 dashboard.
-
-## Available Portals
-
-| Portal                        | Purpose                                                |
-| ----------------------------- | ------------------------------------------------------ |
-| 👑 **Admin Portal**           | Manage trusted issuers and claim permissions.          |
-| 🏢 **Issuer Portal**          | Issue and manage verifiable attestations.              |
-| 👤 **Identity Holder Portal** | Register and view identity and credential information. |
-| 🔎 **Verifier Portal**        | Verify claims directly against blockchain state.       |
-| 💰 **Gated DeFi Portal**      | Test claim-based access control.                       |
-
-Wallet connectivity is provided through MetaMask / EIP-1193 providers using `ethers.js`.
-
----
-
-# 📁 Project Structure
-
-```text
-identity-management-system/
-│
+aegisid/
 ├── contracts/
-│   ├── IdentityRegistry.sol
-│   ├── IssuerRegistry.sol
-│   ├── ClaimStore.sol
-│   ├── RecoveryModule.sol
-│   │
-│   ├── examples/
-│   │   └── GatedDeFiService.sol
-│   │
-│   └── interfaces/
-│       ├── IClaimStore.sol
-│       ├── IIdentityRegistry.sol
-│       └── IIssuerRegistry.sol
-│
+│   ├── IdentityRegistry.sol       # DID ↔ address registration & lookup
+│   ├── IssuerRegistry.sol         # Trusted issuer whitelist / suspension
+│   ├── ClaimRegistry.sol          # Issue, verify, revoke claims
+│   └── interfaces/                # Shared interfaces for cross-contract calls
+├── scripts/
+│   ├── deploy.js                  # Deployment script (local / testnet)
+│   └── seed.js                    # Seed sample issuers & claims for demo
+├── test/
+│   ├── IdentityRegistry.test.js
+│   ├── IssuerRegistry.test.js
+│   └── ClaimRegistry.test.js
 ├── frontend/
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── AdminPortal.tsx
-│   │   │   ├── IssuerPortal.tsx
-│   │   │   ├── UserPortal.tsx
-│   │   │   ├── VerifierPortal.tsx
-│   │   │   ├── GatedDeFiPortal.tsx
-│   │   │   └── Navbar.tsx
-│   │   │
-│   │   ├── contracts/
-│   │   └── utils/
-│   │
-│   └── package.json
-│
-├── scripts/
-│   ├── deploy.ts
-│   ├── demo_flow.ts
-│   ├── grant_admin.ts
-│   ├── check_balance.ts
-│   └── check_roles.ts
-│
-├── test/
-│   ├── ClaimStore.test.ts
-│   ├── EIP712Claims.test.ts
-│   ├── IdentityRegistry.test.ts
-│   ├── IntegrationAndGatedDeFi.test.ts
-│   ├── IssuerRegistry.test.ts
-│   └── RecoveryModule.test.ts
-│
-├── deployedContracts.json
-├── hardhat.config.ts
+│   │   ├── components/            # Wallet connect, claim cards, forms
+│   │   ├── hooks/                 # useContract, useWallet, useClaims
+│   │   ├── pages/                 # Register, Issue, Verify dashboards
+│   │   └── utils/                 # Hashing, IPFS upload helpers
+│   ├── index.html
+│   └── vite.config.js
+├── hardhat.config.js
 ├── .env.example
-├── HOW_TO_USE.md
-├── package.json
 └── README.md
 ```
 
----
-
-# ⚙️ Technology Stack
-
-## Blockchain
-
-* Solidity `0.8.24`
-* Ethereum-compatible EVM
-* Hardhat
-* OpenZeppelin Contracts
-* ethers.js v6
-* EIP-712
-
-## Frontend
-
-* React 19
-* TypeScript
-* Vite
-* ethers.js v6
-* MetaMask
-* EIP-1193
-
-## Development
-
-* Node.js 18+
-* npm
-* TypeChain
-* dotenv
-* Hardhat testing framework
+> Adjust this tree to match your actual folder layout — this is the conventional structure the setup steps below assume.
 
 ---
 
-# 🚀 Quick Start
+## 🚀 Getting Started
 
-## Prerequisites
+### Prerequisites
 
-Make sure you have:
+- [Node.js](https://nodejs.org/) ≥ 18.x
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- [MetaMask](https://metamask.io/) browser extension
+- A [Sepolia](https://sepolia.dev/) RPC URL (via [Alchemy](https://www.alchemy.com/) / [Infura](https://www.infura.io/)) and a funded test wallet, if deploying beyond localhost
 
-* Node.js 18+
-* npm
-* MetaMask or another EVM-compatible wallet
-
----
-
-## 1. Clone Repository
+### 1. Clone & install
 
 ```bash
-git clone https://github.com/kishu279/identity-management-system.git
-
-cd identity-management-system
-```
-
----
-
-## 2. Install Dependencies
-
-```bash
+git clone https://github.com/<your-username>/aegisid.git
+cd aegisid
 npm install
+cd frontend && npm install && cd ..
 ```
 
----
+### 2. Configure environment variables
 
-## 3. Compile Smart Contracts
+Create a `.env` file in the project root:
+
+```env
+PRIVATE_KEY=your_wallet_private_key
+SEPOLIA_RPC_URL=https://eth-sepolia.g.alchemy.com/v2/your-api-key
+ETHERSCAN_API_KEY=your_etherscan_api_key
+IPFS_API_KEY=your_pinata_or_web3storage_key
+```
+
+> ⚠️ Never commit your `.env` file or private keys. `.env` is already listed in `.gitignore`.
+
+### 3. Compile contracts
 
 ```bash
-npm run compile
+npx hardhat compile
 ```
 
----
-
-## 4. Run Tests
-
-```bash
-npm test
-```
-
----
-
-# 🧪 Run the Full Local Demo
-
-The repository contains an end-to-end demo flow.
-
-## Terminal 1 — Start Hardhat
+### 4. Run a local blockchain
 
 ```bash
 npx hardhat node
 ```
 
-Local network:
-
-```text
-RPC URL:  http://127.0.0.1:8545
-Chain ID: 31337
-```
-
----
-
-## Terminal 2 — Run Demo
+### 5. Deploy contracts (in a new terminal)
 
 ```bash
-npm run demo
+# Local network
+npx hardhat run scripts/deploy.js --network localhost
+
+# Sepolia testnet
+npx hardhat run scripts/deploy.js --network sepolia
 ```
 
-The demo covers:
-
-```text
-Deploy Contracts
-       ↓
-Configure Trusted Issuer
-       ↓
-Register Identity
-       ↓
-Issue KYC Claim
-       ↓
-Verify Claim
-       ↓
-Allow Verified DeFi Deposit
-       ↓
-Reject Unverified User
-       ↓
-Revoke Claim
-       ↓
-Reject User After Revocation
-```
-
----
-
-# 🖥️ Run the Web Dashboard
-
-## 1. Deploy Contracts
-
-After starting Hardhat:
+### 6. Run the frontend
 
 ```bash
-npx hardhat run scripts/deploy.ts --network localhost
+cd frontend
+npm run dev
 ```
 
-The deployment process exports the required contract addresses and ABIs for frontend integration.
+Visit `http://localhost:5173`, connect MetaMask (pointed at the same network you deployed to), and you're ready to go.
 
 ---
 
-## 2. Start Frontend
+## 🔄 Usage Flow
+
+1. **Register identity** — a user connects their wallet and registers a DID via `IdentityRegistry`.
+2. **Issuer onboarding** — the contract owner/DAO whitelists a trusted issuer address in `IssuerRegistry`.
+3. **Claim issuance** — the issuer generates a hash of the credential (e.g. degree certificate), uploads the encrypted document to IPFS, and calls `issueClaim()` with the hash, schema ID, and expiry.
+4. **Claim storage** — `ClaimRegistry` stores the claim hash, issuer address, and status against the holder's DID.
+5. **Verification** — a verifier (or dApp) calls `verifyClaim(holder, claimId)`, which checks: issuer is trusted → claim not expired → claim not revoked → hash matches.
+6. **Revocation (optional)** — the issuer (or holder, depending on claim type) can revoke a claim at any time via `revokeClaim()`, instantly invalidating it for all future verifications.
+
+---
+
+## 🧪 Testing
+
+Run the full contract test suite:
 
 ```bash
-npm run frontend:dev
+npx hardhat test
 ```
 
-Open:
-
-```text
-http://localhost:5173
-```
-
----
-
-## 3. Configure MetaMask
-
-Use:
-
-```text
-Network:   Hardhat Localhost
-RPC URL:   http://127.0.0.1:8545
-Chain ID:  31337
-Currency:  ETH
-```
-
-For the complete Admin → User → Issuer → Verifier → DeFi walkthrough, see:
-
-**[HOW_TO_USE.md](./HOW_TO_USE.md)**
-
----
-
-# 🌍 Testnet Deployment
-
-Hardhat is configured for Ethereum-compatible test networks including:
-
-* Sepolia
-* Base Sepolia
-
-Create your environment file:
+Check gas usage:
 
 ```bash
-cp .env.example .env
+REPORT_GAS=true npx hardhat test
 ```
 
-Configure:
-
-```env
-SEPOLIA_RPC_URL="YOUR_SEPOLIA_RPC_URL"
-PRIVATE_KEY="YOUR_PRIVATE_KEY"
-ETHERSCAN_API_KEY="YOUR_ETHERSCAN_API_KEY"
-```
-
-### Sepolia
+Check test coverage:
 
 ```bash
-npx hardhat run scripts/deploy.ts --network sepolia
-```
-
-### Base Sepolia
-
-```bash
-npx hardhat run scripts/deploy.ts --network baseSepolia
-```
-
-> ⚠️ **Never commit private keys, API secrets, or `.env` files to GitHub.**
-
----
-
-# ✅ Testing
-
-The repository includes tests covering the major smart-contract components.
-
-```text
-IdentityRegistry
-       │
-       ├── Registration
-       ├── Deactivation
-       └── Reactivation
-
-IssuerRegistry
-       │
-       ├── Roles
-       ├── Issuer Management
-       └── Claim Permissions
-
-ClaimStore
-       │
-       ├── Claim Issuance
-       ├── Verification
-       ├── Expiration
-       └── Revocation
-
-EIP712Claims
-       │
-       ├── Signature Verification
-       ├── Nonces
-       └── Replay Protection
-
-RecoveryModule
-       │
-       └── Guardian Recovery
-
-Integration
-       │
-       └── Gated DeFi
-```
-
-Run everything:
-
-```bash
-npm test
+npx hardhat coverage
 ```
 
 ---
 
-# 🛡️ Security Design
+## 🗺 Roadmap
 
-AegisID uses multiple layers of security.
+- [ ] Zero-knowledge proof support for fully selective disclosure (e.g. prove age > 18 without revealing DOB)
+- [ ] Multi-chain / cross-chain DID resolution (W3C DID method compliance)
+- [ ] Layer-2 deployment (Base / Arbitrum / Polygon) to reduce gas costs
+- [ ] Soulbound token (SBT) representation for non-transferable credentials
+- [ ] Issuer reputation & staking mechanism
+- [ ] Mobile wallet support (WalletConnect)
+- [ ] Governance module for decentralized issuer approval
 
-### 🔐 Role-Based Access Control
-
-Issuer administration uses OpenZeppelin `AccessControl`.
-
-### 🏛️ Issuer Authorization
-
-A claim can only be considered valid when its issuer is trusted and authorized for the relevant claim type.
-
-### ✍️ EIP-712 Signature Verification
-
-Typed signatures are recovered and verified against the expected issuer.
-
-### 🔁 Replay Protection
-
-Nonce-based validation prevents reuse of signed claim authorizations.
-
-### ⏰ Deadline Protection
-
-Signed claims can contain a deadline after which they cannot be submitted.
-
-### 🚫 Revocation
-
-Issuers or authorized managers can invalidate previously issued claims.
-
-### ⌛ Expiration
-
-Time-bound claims become invalid after their expiration timestamp.
-
-### 🆔 Active Identity Requirement
-
-Claim issuance can depend on an active identity registered in `IdentityRegistry`.
-
-### 🔗 Composability
-
-Other smart contracts can consume identity verification instead of implementing their own credential system.
 
 ---
 
-# ⚠️ Production Considerations
+## 🙏 Acknowledgements
 
-This project is an engineering/reference implementation and should be independently audited before production deployment.
-
-Before using it with real assets or sensitive identity workflows, consider:
-
-* Independent smart-contract security auditing
-* Secure private-key management
-* Secure off-chain credential storage
-* Encryption and access control for off-chain data
-* Standardized credential schemas
-* Issuer governance
-* Recovery threat modeling
-* Privacy threat modeling
-* Frontend security
-* Oracle / external data dependencies
-* Upgrade and migration strategy
-* Multi-chain consistency
-
-### Important
-
-The system's cryptographic commitments provide integrity and verification capabilities, but they should not be described as complete anonymity or guaranteed privacy.
+- [OpenZeppelin](https://www.openzeppelin.com/) for secure, audited contract primitives
+- [Hardhat](https://hardhat.org/) for the development and testing framework
+- [Ethereum Foundation](https://ethereum.org/) for the underlying infrastructure this system is built on
 
 ---
 
-# 🧭 Potential Use Cases
-
-## 🏦 Compliance-Aware DeFi
-
-Protocols can require an active KYC or eligibility credential before allowing access.
-
-```text
-Wallet
-  ↓
-Valid KYC Claim?
-  ↓
-YES ─────► DeFi Access
-NO  ─────► Transaction Rejected
-```
-
----
-
-## 🎓 Verifiable Education
-
-Universities can issue verifiable credentials representing:
-
-* Degrees
-* Certifications
-* Course completion
-* Student status
-
-without publishing the underlying student records directly on-chain.
-
----
-
-## 🏛️ Membership & Access Control
-
-Organizations can issue membership credentials and allow decentralized applications to verify them.
-
----
-
-## 🌍 Residency & Eligibility
-
-Applications can verify issuer-backed eligibility claims without directly duplicating the issuer's database.
-
----
-
-## 🔑 Web3 Account Recovery
-
-Guardian-based recovery can provide an additional recovery mechanism for lost or compromised wallet access.
-
----
-
-# 🧩 Future Extensions
-
-Possible future improvements include:
-
-* 🔐 Zero-Knowledge Proof verification
-* 🕵️ Selective disclosure
-* 🆔 DID integrations
-* 📦 Verifiable Credential standards
-* 🌐 IPFS / decentralized storage integrations
-* 🏛️ Issuer reputation systems
-* 🗳️ Issuer governance
-* 🔄 Credential versioning
-* ⛓️ Multi-chain deployments
-* 🛡️ Advanced recovery policies
-* 🔌 Protocol-specific verifier adapters
-
----
-
-# 📚 Documentation
-
-| Resource                         | Description                    |
-| -------------------------------- | ------------------------------ |
-| [HOW_TO_USE.md](./HOW_TO_USE.md) | Complete setup and usage guide |
-| [contracts/](./contracts)        | Solidity smart contracts       |
-| [frontend/](./frontend)          | React Web3 dashboard           |
-| [scripts/](./scripts)            | Deployment and utility scripts |
-| [test/](./test)                  | Smart-contract test suite      |
-
----
-
-# 🤝 Contributing
-
-Contributions are welcome.
-
-### Create a feature branch
-
-```bash
-git checkout -b feature/your-feature
-```
-
-### Make your changes
-
-```bash
-npm run compile
-npm test
-```
-
-### Commit
-
-```bash
-git add .
-
-git commit -m "feat: add your feature"
-```
-
-### Push
-
-```bash
-git push origin feature/your-feature
-```
-
-Then open a Pull Request.
-
-Please include:
-
-* Clear description
-* Implementation details
-* Tests for behavioral changes
-* Security considerations
-* Screenshots for UI changes where appropriate
-
----
-
-# 📄 License
-
-This project is released under the **MIT License**.
-
-See the source files for individual license declarations.
-
----
-
-# ⭐ Project Vision
-
-AegisID demonstrates how blockchain can be used as a **verification and trust layer** without turning the blockchain into a database of personal information.
-
-```text
-Identity
-    +
-Trusted Issuers
-    +
-Cryptographic Commitments
-    +
-Verifiable Credentials
-    +
-On-Chain Verification
-    +
-Application Enforcement
-    │
-    ▼
-Composable Decentralized Identity
-Infrastructure
-```
-
-The goal is simple:
-
-> **Make digital trust programmable while keeping sensitive identity information outside the blockchain whenever possible.**
-
----
-
-<p align="center">
-  <strong>Built with Solidity • Hardhat • OpenZeppelin • React • Vite • ethers.js</strong>
-</p>
-
-<p align="center">
-  ⭐ Star the repository if you find the project useful.
-</p>
-```
-
-### One important recommendation
-
-For a **GitHub portfolio / placement project**, I would also add these near the top once you have them:
-
-* **Live Demo**
-* **Deployed Contract Addresses**
-* **Screenshots/GIF of the dashboard**
-* **Test coverage badge**
-* **Demo video**
-* **Architecture diagram**
-* **Contributors**
-* **Known limitations**
+<p align="center">Built with ❤️ for a more user-controlled internet.</p>
