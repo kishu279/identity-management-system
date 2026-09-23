@@ -61,18 +61,15 @@ A holder creates a decentralized identifier (DID) tied to their wallet. A whitel
 ## 🏗 Architecture
 
 ```text
-┌────────────────┐        ┌──────────────────────┐        ┌────────────────────┐
-│  Identity Holder│───────▶│  AegisID Smart        │───────▶│     Verifier /      │
-│  (Wallet / DID) │  claim │  Contracts (on-chain) │ query  │  dApp / Protocol    │
-└────────────────┘  submit └──────────────────────┘        └────────────────────┘
-        ▲                          ▲     │
-        │ issues credential        │     │ event logs
-        │                          │     ▼
-┌────────────────┐        ┌──────────────────────┐
-│ Trusted Issuer  │───────▶│  Off-chain Storage    │
-│ (University /   │  store │  (IPFS / encrypted    │
-│  Employer / Govt)│documents│  document store)     │
-└────────────────┘        └──────────────────────┘
+                      claim                         query
+┌──────────────────┐          ┌──────────────────┐          ┌──────────────────┐
+│ Identity Holder  │─────────▶ Smart Contracts   │─────────▶ Verifier / dApp  │
+└──────────────────┘          └──────────────────┘          └──────────────────┘
+          ▲  issues credential          ▲  store / retrieve
+          │                             │
+┌──────────────────┐          ┌──────────────────┐
+│  Trusted Issuer  │          │Off-chain Storage │
+└──────────────────┘          └──────────────────┘
 ```
 
 **Design principle:** only what's needed for trustless verification lives on-chain — DID ↔ address mapping, issuer registry, claim hash, schema ID, issuance/expiry timestamps, and revocation flag. The actual PII (documents, images, personal data) stays off-chain, encrypted, and is only ever shared peer-to-peer between the holder and a verifier who has been explicitly granted access.
@@ -258,4 +255,4 @@ npx hardhat coverage
 
 ---
 
-<p align="center">Built with ❤️ for a more user-controlled internet.</p>
+<p align="center">:).</p>
